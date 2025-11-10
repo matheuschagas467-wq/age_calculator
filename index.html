@@ -5,19 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Idade</title>
 
-<!-- 🔗 Metatags Open Graph (para WhatsApp, Facebook etc.) -->
-<meta property="og:title" content="Calculadora de Idade - MatheusChagas.dev">
-<meta property="og:description" content="Descubra sua idade exata em anos, meses e dias, e veja quantos anos terá em qualquer data futura!">
-<meta property="og:image" content="https://matheuschagas467-wq.github.io/age_calculator/preview.png">
-<meta property="og:url" content="https://matheuschagas467-wq.github.io/age_calculator/">
-<meta property="og:type" content="website">
-
-<!-- 🐦 Metatags para Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Calculadora de Idade - MatheusChagas.dev">
-<meta name="twitter:description" content="Descubra sua idade exata em anos, meses e dias, e veja quantos anos terá em qualquer data futura!">
-<meta name="twitter:image" content="https://matheuschagas467-wq.github.io/age_calculator/preview.png">
-
 <!-- Ícones (Lucide) -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -190,7 +177,115 @@
 </style>
 </head>
 
-<body
+<body>
+  <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+    <i data-lucide="moon" class="icon"></i>
+  </button>
+
+  <div class="container">
+    <h1><i data-lucide="calendar"></i> Calculadora de Idade</h1>
+
+    <label>Data de nascimento:</label>
+    <input type="date" id="nascimento">
+
+    <label>Data para cálculo:</label>
+    <input type="date" id="dataCalculo">
+
+    <button onclick="calcular()"><i data-lucide='calculator'></i> Calcular</button>
+    <button class="btn-limpar" onclick="limparCampos()"><i data-lucide='x-circle'></i> Limpar</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <footer>
+    <img src="./fghfdhfd-1.png" alt="Matheus Chagas">
+    Desenvolvido por 
+    <a href="https://github.com/matheuschagas467-wq" target="_blank">MatheusChagas.dev</a>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const themeToggle = document.getElementById("themeToggle");
+    const body = document.body;
+    const resultado = document.getElementById("resultado");
+
+    themeToggle.addEventListener("click", () => {
+      body.classList.toggle("dark");
+      const icon = body.classList.contains("dark") ? "sun" : "moon";
+      themeToggle.innerHTML = `<i data-lucide="${icon}" class="icon"></i>`;
+      lucide.createIcons();
+    });
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      body.classList.add('dark');
+      themeToggle.innerHTML = `<i data-lucide="sun" class="icon"></i>`;
+      lucide.createIcons();
+    }
+
+    function calcular() {
+      const nascimento = document.getElementById("nascimento").value;
+      const dataCalculo = document.getElementById("dataCalculo").value;
+
+      if (!nascimento || !dataCalculo) {
+        resultado.innerHTML = "Por favor, preencha as duas datas.";
+        resultado.classList.add("visivel");
+        return;
+      }
+
+      const dataNasc = new Date(nascimento);
+      const dataFinal = new Date(dataCalculo);
+
+      if (dataFinal < dataNasc) {
+        resultado.innerHTML = "A data de cálculo não pode ser antes do nascimento.";
+        resultado.classList.add("visivel");
+        return;
+      }
+
+      let diff = dataFinal - dataNasc;
+      let diasTotais = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      let anos = dataFinal.getFullYear() - dataNasc.getFullYear();
+      let meses = dataFinal.getMonth() - dataNasc.getMonth();
+      let dias = dataFinal.getDate() - dataNasc.getDate();
+
+      if (dias < 0) {
+        meses--;
+        let ultimoMes = new Date(dataFinal.getFullYear(), dataFinal.getMonth(), 0).getDate();
+        dias += ultimoMes;
+      }
+
+      if (meses < 0) {
+        anos--;
+        meses += 12;
+      }
+
+      const hoje = new Date();
+      let idadeAtual = hoje.getFullYear() - dataNasc.getFullYear();
+      let m = hoje.getMonth() - dataNasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) idadeAtual--;
+
+      resultado.innerHTML = `
+        <b>Idade atual:</b> ${idadeAtual} anos<br>
+        <b>Tempo vivido:</b> ${Math.floor((hoje - dataNasc) / (1000 * 60 * 60 * 24))} dias<br><br>
+        <b>Na data ${dataFinal.toLocaleDateString("pt-BR")} você terá:</b><br>
+        ${anos} anos, ${meses} meses e ${dias} dias de idade.
+      `;
+
+      resultado.classList.remove("visivel");
+      setTimeout(() => resultado.classList.add("visivel"), 100);
+    }
+
+    function limparCampos() {
+      document.getElementById("nascimento").value = "";
+      document.getElementById("dataCalculo").value = "";
+      resultado.innerHTML = "";
+      resultado.classList.remove("visivel");
+    }
+  </script>
+</body>
+</html>
+
 
 
 
